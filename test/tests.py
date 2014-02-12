@@ -32,7 +32,7 @@ class TestCase(unittest.TestCase):
         splunk.access_token = ''
         splunk.project_id = ''
 
-        logger.log({
+        splunk.log({
           'event': 'event',
           'duration': '5ms'
         })
