@@ -16,12 +16,10 @@ Use logger
 
 ```python
 
-from splunk import Log
+import splunk
 
-YOUR_SPLUNK_ACCESS_TOKEN = '--'
-YOUR_SPLUNK_PROJECT_ID = '--'
-
-syslogger = Log(SPLUNK_ACCESS_TOKEN, SPLUNK_PROJECT_ID).send
+splunk.access_token = ''
+splunk.project_id = ''
 
 class SomeHandler(webapp.RequestHandler):
 
@@ -29,11 +27,11 @@ class SomeHandler(webapp.RequestHandler):
 
         # queue job to log event to splunkstorm.
 
-        log = {
+        event = {
             'event': 'visit',
             'path': '/'
         }
-        deferred.defer(syslogger, log)
+        deferred.defer(splunk.log, event)
 
 ```
 

@@ -6,59 +6,52 @@ from google.appengine.api import urlfetch
 from google.appengine._internal.django.utils import simplejson as json
 
 
-INPUT_URL = 'https://api.splunkstorm.com/1/inputs/http?'
+input_url = 'https://api.splunkstorm.com/1/inputs/http?'
+project_id = None
+access_token = None
 
 
-class Log(object):
+def log(
+    event_json,
+    sourcetype='syslog',
+    host=None,
+    source=None
+):
 
-    def __init__(
-        self,
-        access_token,
-        project_id,
-        input_url=INPUT_URL
-    ):
+    if not project_id:
+        raise Exception('project_id is required')
+    if not access_token:
+        raise Exception('access_token is required')
 
-        self.input_url = input_url
-        self.project_id = project_id
-        self.access_token = access_token
+    params = {
+        'project': project_id,
+        'sourcetype': sourcetype
+    }
+    if host:
+        params['host'] = host
+    if source:
+        params['source'] = source
 
-    def send(
-        self,
-        event_json,
-        sourcetype='syslog',
-        host=None,
-        source=None
-    ):
+    url = input_url + urllib.urlencode(params)
 
-        params = {
-            'project': self.project_id,
-            'sourcetype': sourcetype
-        }
-        if host:
-            params['host'] = host
-        if source:
-            params['source'] = source
+    payload = json.dumps(event_json)
 
-        url = self.input_url + urllib.urlencode(params)
+    authorization = 'Basic ' + base64.b64encode(':'+access_token)
+    headers = {'Authorization': authorization}
 
-        payload = json.dumps(event_json)
+    # rpc = urlfetch.create_rpc()
+    # urlfetch.make_fetch_call(
+    #     rpc,
+    #     url,
+    #     payload=payload,
+    #     headers=headers,
+    #     method=urlfetch.POST
+    # )
+    # rpc.get_result()
 
-        authorization = 'Basic ' + base64.b64encode(':'+self.access_token)
-        headers = {'Authorization': authorization}
-
-        # rpc = urlfetch.create_rpc()
-        # urlfetch.make_fetch_call(
-        #     rpc,
-        #     url,
-        #     payload=payload,
-        #     headers=headers,
-        #     method=urlfetch.POST
-        # )
-        # rpc.get_result()
-
-        return urlfetch.fetch(
-            url,
-            payload=payload,
-            headers=headers,
-            method=urlfetch.POST
-        )
+    return urlfetch.fetch(
+        url,
+        payload=payload,
+        headers=headers,
+        method=urlfetch.POST
+    )

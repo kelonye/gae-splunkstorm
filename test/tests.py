@@ -9,7 +9,7 @@ from views import app
 import unittest
 import webtest
 import logging
-from lib import Log
+from lib import splunk
 
 logger = logging.getLogger(__name__)
 
@@ -27,19 +27,14 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         self.testbed.deactivate()
 
-    def test_all(self):
+    def test_post(self):
 
-        SPLUNK_ACCESS_TOKEN = '--'
-        SPLUNK_PROJECT_ID = '--'
+        splunk.access_token = ''
+        splunk.project_id = ''
 
-        log = Log(
-            SPLUNK_ACCESS_TOKEN,
-            SPLUNK_PROJECT_ID
-        ).send
-
-        log({
-            'event': 'build',
-            'duration': '4000'
+        logger.log({
+          'event': 'event',
+          'duration': '5ms'
         })
 
         # TODO: more test
