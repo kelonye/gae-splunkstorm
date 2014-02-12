@@ -18,6 +18,20 @@ def log(
     source=None
 ):
 
+
+    """ posts to input_url
+
+        Args:
+            event_json{dict} - event payload
+            sourcetype{str} - sourcetype,  defaults to syslog
+            host{str} - log host origin host
+            source{str} - log origin api
+
+        Returns:
+            {str} - post response
+        
+    """
+
     if not project_id:
         raise Exception('project_id is required')
     if not access_token:
